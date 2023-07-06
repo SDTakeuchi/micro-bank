@@ -1,13 +1,13 @@
 package model
 
 import (
-	"crypto/sha256"
 	"fmt"
 	"time"
 
 	"google/uuid"
 
 	"github.com/go-playground/validator/v10"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var (
@@ -66,13 +66,16 @@ func NewUser(firstName, familyName, email, rawPassword string) (IUser, error) {
 			minPasswordLength,
 		)
 	}
-	hashedPassword := sha256.Sum256([]byte(rawPassword))
+	hashedPassword, err := HashPassword(rawPassword)
+	if err != nil {
+		return nil, err
+	}
 	u := &user{
 		id:             uuid.NewV4(),
 		email:          email,
 		firstName:      firstName,
 		familyName:     familyName,
-		hashedPassword: string(hashedPassword[:]),
+		hashedPassword: hashedPassword,
 		kycDone:        false,
 		createdAt:      time.Now(),
 		updatedAt:      nil,
@@ -83,4 +86,22 @@ func NewUser(firstName, familyName, email, rawPassword string) (IUser, error) {
 		return nil, errors
 	}
 	return u, nil
+}
+
+func HashPassword(rawPassword string) (string, error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword(
+		[]byte(rawPassword),
+		bcrypt.DefaultCost,
+	)
+	if err != nil {
+		return "", fmt.Errorf("failed to generate hash password: %w", err)
+	}
+	return string(hashedPassword), nil
+}
+
+func ComparePassword(rawPassword, hashedPassword string) error {
+	return bcrypt.CompareHashAndPassword(
+		[]byte(rawPassword),
+		[]byte(hashedPassword),
+	)
 }

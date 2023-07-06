@@ -4,7 +4,7 @@ import "time"
 
 type Transfer struct {
 	ID                   string
-	Currency             Currency
+	// Currency             Currency
 	Amount               float64
 	SenderAccountID      string
 	ReceiverAccountID    string

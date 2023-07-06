@@ -8,9 +8,9 @@ type Account struct {
 	Number string
 	// BranchID  int64
 	Balance   float64
-	Currency  Currency
+	// Currency  Currency
 	CreatedAt time.Time
-	UpdatedAt time.Time
-	BannedAt  time.Time
-	DeletedAt time.Time
+	UpdatedAt *time.Time
+	BannedAt  *time.Time
+	DeletedAt *time.Time
 }
