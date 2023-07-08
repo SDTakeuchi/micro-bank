@@ -1,7 +1,7 @@
 package uuid
 
 import (
-	"google/uuid"
+	"github.com/google/uuid"
 )
 
 type UUID struct {
